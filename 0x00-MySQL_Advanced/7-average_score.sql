@@ -8,7 +8,7 @@ BEGIN
 
 
   -- compute the average score
-  SELECT AVG(score) INTO avg_score FROM corrections WHERE user_id = user_id;
+  SELECT AVG(score) INTO avg_score FROM corrections WHERE corrections.user_id = user_id;
 
   -- store the computed score
   UPDATE users SET average_score = avg_score WHERE id = user_id;
