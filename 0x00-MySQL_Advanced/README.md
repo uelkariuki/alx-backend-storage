@@ -40,4 +40,5 @@
 | 9. Optimize search and score | [9-index_name_score.sql](./9-index_name_score.sql) |
 | 10. Safe divide | [10-div.sql](./10-div.sql) |
 | 11. No table for a meeting | [11-need_meeting.sql](./11-need_meeting.sql) |
-
+| 12. Average weighted score | [100-average_weighted_score.sql](./100-average_weighted_score.sql) |
+| 13. Average weighted score for all! | [101-average_weighted_score.sql](./101-average_weighted_score.sql) |
