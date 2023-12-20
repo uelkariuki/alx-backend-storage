@@ -31,7 +31,7 @@ class Cache(object):
         value = self._redis.get(key)
         if value is None:
             return None
-        elif fn is not None:
+        if fn is not None:
             return fn(value)
         else:
             return value
@@ -47,6 +47,6 @@ class Cache(object):
     def get_int(self, key: str) -> int:
         """Retrieves value of key from Redis and converts it to an int"""
         value = self.get(key)
-        if value:
+        if value is not None:
             return int(value)
         return None
