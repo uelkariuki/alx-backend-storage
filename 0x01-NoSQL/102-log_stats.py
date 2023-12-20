@@ -25,7 +25,7 @@ if __name__ == "__main__":
 	status_count = collection.count_documents({"method": "GET", "path": "/status"})
 	print(f"{status_count} status check")
 
-
+	# add top 10 IPs
 	all_docs = collection.find({})
 
 	ip_counts = Counter(doc['ip'] for doc in all_docs)
