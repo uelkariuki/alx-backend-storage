@@ -3,6 +3,7 @@
 """
 Python script that provides some stats about Nginx logs stored in MongoDB
 """
+from collections import Counter
 import re
 from pymongo import MongoClient
 
@@ -24,19 +25,13 @@ if __name__ == "__main__":
 	status_count = collection.count_documents({"method": "GET", "path": "/status"})
 	print(f"{status_count} status check")
 
-	ip_counts = {}
 
-	all_fields = collection.find({}).limit(10)
+	all_docs = collection.find({})
 
-	for doc in all_fields:
-		ip = doc['ip']
-		if ip not in ip_counts:
-			ip_counts[ip] = 1
-		else:
-			ip_counts[ip] += 1
+	ip_counts = Counter(doc['ip'] for doc in all_docs)
 
-	sorted_ips = sorted(ip_counts.items(), key=lambda item: item[0])
+	top10_ips = ip_counts.most_common(10)
 
 	print("IPs:")
-	for ip, count in sorted_ips:
+	for ip, count in top10_ips:
 		print(f"\t{ip}: {count}")
