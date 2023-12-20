@@ -24,10 +24,19 @@ if __name__ == "__main__":
 	status_count = collection.count_documents({"method": "GET", "path": "/status"})
 	print(f"{status_count} status check")
 
+	ip_counts = {}
+
 	all_fields = collection.find({}).limit(10)
-	ips_list = [doc['ip'] for doc in all_fields]
-	ips_list.sort()
+
+	for doc in all_fields:
+		ip = doc['ip']
+		if ip not in ip_counts:
+			ip_counts[ip] = 1
+		else:
+			ip_counts[ip] += 1
+
+	sorted_ips = sorted(ip_counts.items(), key=lambda item: item[0])
 
 	print("IPs:")
-	for ip in ips_list:
-		print(f"\t{ip}")
+	for ip, count in sorted_ips:
+		print(f"\t{ip}: {count}")
