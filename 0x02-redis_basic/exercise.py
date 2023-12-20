@@ -25,6 +25,31 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwds)
     return wrapper
 
+def call_history(method: Callable) -> Callable:
+    """
+    call history decorator
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwds):
+        """
+        Wrapper method that also implements  to store
+        the history of inputs and outputs for a particular function
+        """
+
+        # append ":inputs" and ":outputs" to create input and output list keys
+        input_keys = method.__qualname__ + ":inputs"
+        output_keys = method.__qualname__ + ":outputs"
+
+        # store the input args in Redis
+        self._redis.rpush(input_keys, str(args))
+
+        # Store output in the "...:outputs" list, then return the output
+        result = method(self, *args, **kwds)
+        self._redis.rpush(output_keys, str(result))
+
+        return result
+    return wrapper
+
 class Cache(object):
     """
     class Cache to be used to write strings to Redis
@@ -35,6 +60,7 @@ class Cache(object):
         self._redis.flushdb()  # Flush database to clear old entries
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """ Store method that returns a string"""
         random_key = str(uuid.uuid4())
@@ -42,6 +68,7 @@ class Cache(object):
         return random_key
 
     @count_calls
+    @call_history
     def get(self, key: str, fn: Optional[Callable] = None):
         """
         get method that take a key string argument,
@@ -56,6 +83,7 @@ class Cache(object):
             return value
 
     @count_calls
+    @call_history
     def get_str(self, key: str) -> str:
         """Retrieves value of key from Redis and converts it to a str"""
         value = self.get(key)
@@ -65,6 +93,7 @@ class Cache(object):
             return value.decode('utf-8')
 
     @count_calls
+    @call_history
     def get_int(self, key: str) -> int:
         """Retrieves value of key from Redis and converts it to an int"""
         value = self.get(key)
