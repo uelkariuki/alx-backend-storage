@@ -32,7 +32,7 @@ def call_history(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(self, *args, **kwds):
         """
-        Wrapper method that also implements  to store
+        Wrapper method that also implements: to store
         the history of inputs and outputs for a particular function
         """
 
