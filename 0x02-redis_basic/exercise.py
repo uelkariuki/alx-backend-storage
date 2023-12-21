@@ -25,6 +25,7 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwds)
     return wrapper
 
+
 def call_history(method: Callable) -> Callable:
     """
     call history decorator
@@ -50,17 +51,22 @@ def call_history(method: Callable) -> Callable:
         return result
     return wrapper
 
+
 def replay(method: Callable[..., Any]) -> None:
     """
     Displays the history of calls of a particular function
     """
-    inputs = method.__self__._redis.lrange(method.__qualname__ + ":inputs", 0, -1)
-    outputs = method.__self__._redis.lrange(method.__qualname__ + ":outputs", 0, -1)
+    inputs = method.__self__._redis.lrange(method.__qualname__
+                                           + ":inputs", 0, -1)
+    outputs = method.__self__._redis.lrange(method.__qualname__
+                                            + ":outputs", 0, -1)
 
     print(f'{method.__qualname__} was called \
 {method.__self__._redis.get(method.__qualname__).decode("utf-8")} times:')
-    for In , Out in zip(inputs, outputs):
-        print(f'{method.__qualname__}(*{In.decode("utf-8")}) -> {Out.decode("utf-8")}')
+    for In, Out in zip(inputs, outputs):
+        print(f'{method.__qualname__}(*{In.decode("utf-8")})
+              -> {Out.decode("utf-8")}')
+
 
 class Cache(object):
     """
