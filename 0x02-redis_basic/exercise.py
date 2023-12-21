@@ -54,26 +54,13 @@ def replay(method):
     """
     Displays the history of calls of a particular function
     """
-    history = []
+    inputs = method.__self__._redis.lrange(method.__qualname__ + ":inputs", 0, -1)
+    outputs = method.__self__._redis.lrange(method.__qualname__ + ":outputs", 0, -1)
 
-    def wrapper(self, *args, **kwargs):
-        """
-        Wrapper method
-        """
-        result = method(self, *args, **kwargs)
-        history.append((args, kwargs, result))
-        return result
-
-    def print_history_template():
-        """ Template for printing the history output"""
-        print(f'{method.__qualname__} was called {len(history)} times:')
-        for x, call in enumerate(history, 1):
-            args, kwargs, result = call
-            print(f'{method.__qualname__}{args} -> {result}')
-
-    wrapper.print_history_template = print_history_template
-    return wrapper
-
+    print(f'{method.__qualname__} was called \
+{method.__self__._redis.get(method.__qualname__).decode("utf-8")} times:')
+    for In , Out in zip(inputs, outputs):
+        print(f'{method.__qualname__}{In.decode("utf-8")} -> {Out.decode("utf-8")}')
 
 class Cache(object):
     """
@@ -86,7 +73,6 @@ class Cache(object):
 
     @count_calls
     @call_history
-    @replay
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """ Store method that returns a string"""
         random_key = str(uuid.uuid4())
@@ -95,7 +81,6 @@ class Cache(object):
 
     @count_calls
     @call_history
-    @replay
     def get(self, key: str, fn: Optional[Callable] = None):
         """
         get method that take a key string argument,
@@ -111,7 +96,6 @@ class Cache(object):
 
     @count_calls
     @call_history
-    @replay
     def get_str(self, key: str) -> str:
         """Retrieves value of key from Redis and converts it to a str"""
         value = self.get(key)
@@ -122,7 +106,6 @@ class Cache(object):
 
     @count_calls
     @call_history
-    @replay
     def get_int(self, key: str) -> int:
         """Retrieves value of key from Redis and converts it to an int"""
         value = self.get(key)
