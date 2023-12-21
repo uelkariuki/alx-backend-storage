@@ -64,8 +64,8 @@ def replay(method: Callable[..., Any]) -> None:
     print(f'{method.__qualname__} was called \
 {method.__self__._redis.get(method.__qualname__).decode("utf-8")} times:')
     for In, Out in zip(inputs, outputs):
-        print(f'{method.__qualname__}(*{In.decode("utf-8")})
-              -> {Out.decode("utf-8")}')
+        print(f'{method.__qualname__}(*{In.decode("utf-8")})\
+-> {Out.decode("utf-8")}')
 
 
 class Cache(object):
