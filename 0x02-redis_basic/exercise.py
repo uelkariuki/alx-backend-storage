@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 """
-Writing strings to Redis
+Class Cache, decorators and methods
 """
 import redis
 import uuid
-from typing import Union, Callable, Optional
+from typing import Any, Union, Callable, Optional
 from functools import wraps
 
 
@@ -50,7 +50,7 @@ def call_history(method: Callable) -> Callable:
         return result
     return wrapper
 
-def replay(method):
+def replay(method: Callable[..., Any]) -> None:
     """
     Displays the history of calls of a particular function
     """
