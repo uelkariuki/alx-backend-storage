@@ -21,5 +21,5 @@ def get_page(url: str) -> str:
     else:
         response = requests.get(url)
         red.setex(f'cached:{url}', 10, response.text)
-        red.set(f'cached:{url}', 1)
+        red.set(f'count:{url}', 1)
         return response.text
